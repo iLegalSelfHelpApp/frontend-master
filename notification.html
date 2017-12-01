@@ -1,0 +1,178 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload PDF - iLegalSelfHelp</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/jquery.fancybox.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #000000;
+    text-align: left;
+    padding: 8px;
+}
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+input[type=date], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.button {
+    background-color: #9932CC; /* Purple */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+</style>
+</head>
+
+<body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type = "text/javascript">
+function myAjax () {
+    var x = document.getElementById("titletext").value;
+    var y = document.getElementById("bodytext").value;
+    var e = document.getElementById("schedule");
+    var length = e.options[e.selectedIndex].value;
+     $.ajax({        
+            type : 'POST',
+            url : "https://fcm.googleapis.com/fcm/send",
+            headers : {
+                Authorization : 'key=' + 'AIzaSyArQ-Dr9Wpjy1-k-LPZeopSmVgSrPjzTF0'
+            },
+            contentType : 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({"to": "/topics/news", "notification": {"title":x+">"+length,"body":y}}),
+            success : function(response) {
+                console.log(response);
+                 console.log("Sent");
+                 alert("Notification Sent/Scheduled!");
+            },
+            error : function(xhr, status, error) {
+                console.log(xhr.error);  
+                 alert("Error!");                 
+            }
+        });
+   }
+    </script>
+<!-- header section -->
+<section class="innerbanner" role="banner">
+  <header id="header"> 
+    <!-- navigation section  -->
+    <div class="header-content clearfix"> <a class="logo" href="index.html"><img src="images/logo.png" alt="iLegalSelfHelp"></a>
+      <nav class="navigation" role="navigation">
+        <ul class="primary-nav">
+          <li><a href="upload.html">Upload</a></li>
+          <li><a href="notification.html">Notifications</a></li>
+          <li><a href="mapping.html">Mapping</a></li>
+        </ul>
+      </nav>
+      <a href="#" class="nav-toggle">Menu<span></span></a> </div>
+    <!-- navigation section  --> 
+  </header>
+  <!-- banner text -->
+  <div class="container">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="innerbanner-text text-center">
+        <p>Notification Console</p>
+        <!-- banner text --> 
+      </div>
+    </div>
+  </div>
+</section>
+<!-- header section --> 
+<!-- description text section -->
+<section id="inner-description" class="section inner-description">
+  <div class="container">
+   <p>Schedule a recurring notification to iLegal users, or choose "One-Time" under Frequency to send a notification now.</p>
+  <hr> 
+</div>
+  <div class="container">
+    <table>
+  <tr>
+    <th>Title</th>
+    <th>Message</th>
+      <th>Frequency</th>
+    <th> </th>
+  </tr>
+  <tr>
+    <td><input type="text" id="titletext" value=""></td>
+    <td><input type="text" id="bodytext" value=""></td>
+    <td><select id = "schedule">
+      <option value="0">One-Time</option>
+      <option value="88888">Weekly</option>
+      <option value="2592000">Monthly</option>
+  </select></td>
+     <td style="text-align: center"><button class="button" onclick="myAjax()">SCHEDULE</button></td>
+  </tr>
+</table>
+
+  </div>
+</section>
+
+<!-- footer -->
+<footer class="section footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="col-md-12">
+        <p>
+        </p>
+        <p>© 2017 All rights reserved. All Rights Reserved<br>
+          iLegalSelfHelp</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer --> 
+
+<!-- JS FILES --> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="js/bootstrap.min.js"></script> 
+<script src="js/jquery.fancybox.pack.js"></script> 
+<script src="js/jquery.waypoints.min.js"></script> 
+<script src="js/retina.min.js"></script> 
+<script src="js/modernizr.js"></script> 
+<script src="js/jquery.contact.js"></script> 
+<script src="js/main.js"></script>
+</body>
+</html>

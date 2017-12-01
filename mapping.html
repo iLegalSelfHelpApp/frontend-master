@@ -1,0 +1,219 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class='no-js lt-ie9 lt-ie8 lt-ie7' lang=''> <![endif]-->
+<!--[if IE 7]>         <html class='no-js lt-ie9 lt-ie8' lang=''> <![endif]-->
+<!--[if IE 8]>         <html class='no-js lt-ie9' lang=''> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class='no-js' lang=''>
+<!--<![endif]-->
+
+<head>
+<meta charset='utf-8'>
+<meta name='description' content=''>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Upload PDF - iLegalSelfHelp</title>
+<link rel='stylesheet' href='css/bootstrap.min.css'>
+<link rel='stylesheet' href='css/jquery.fancybox.css'>
+<link rel='stylesheet' href='css/main.css'>
+<link rel='stylesheet' href='css/responsive.css'>
+<link rel='stylesheet' href='css/animate.min.css'>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
+</head>'
+
+<style>
+</style>
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+$(document).ready(function () {
+	$("#PDFMap").hide();
+
+	$("#CategorySubmitBtn").click(function (event) {
+		//stop submit the form, we will post it manually.
+		event.preventDefault();
+		// Get form
+		var form = $('#Categoryform')[0];
+		// Create an FormData object
+		var data = new FormData(form);
+
+		// disabled the submit button
+		$("#CategorySubmitBtn").prop("disabled", true);
+
+		$.ajax({
+			type: "POST",
+			enctype: 'multipart/form-data',
+			url: "../Dev/GetMappingFields",
+			data: data,
+			processData: false,
+			contentType: false,
+			cache: false,
+			timeout: 600000,
+			success: function (data) {
+				$("#CategorySubmitBtn").prop("disabled", false);
+				
+				$("#AvailableMap").text("");
+				$("#AvailableMap").append("<ul>");
+				for (i=0; i < data.MappingArray.length; i++){
+					$("#AvailableMap").append("<ol>");
+					$("#AvailableMap").append(data.MappingArray[i][1]);
+					$("#AvailableMap").append("</ol>");
+				}
+				$("#AvailableMap").append("</ul>");
+				$("#PDFMap").show();
+			},
+			error: function (e) {
+				$("#CategorySubmitBtn").prop("disabled", false);
+				$("#AvailableMap").text("Category Selection Failure; Please Try Again.");
+            }
+        });
+    });
+	
+	$("#MapSubmitBtn").click(function (event) {
+		//stop submit the form, we will post it manually.
+		event.preventDefault();
+		// Get form
+		var form = $('#Mapform')[0];
+		// Create an FormData object
+		var data = new FormData(form);
+
+		// disabled the submit button
+		$("#MapSubmitBtn").prop("disabled", true);
+
+		$.ajax({
+			type: "POST",
+			enctype: 'multipart/form-data',
+			url: "../Dev/InsertMappingField",
+			data: data,
+			processData: false,
+			contentType: false,
+			cache: false,
+			timeout: 600000,
+			success: function (data) {
+				$("#MapSubmitBtn").prop("disabled", false);
+				$("#AvailableMap").text("Successful adding of field!");
+			},
+			error: function (e) {
+				$("#MapSubmitBtn").prop("disabled", false);
+				$("#AvailableMap").text("Map Addition Failure; Please Try Again.");
+            }
+        });
+    });
+});
+</script>
+
+<body>
+<!-- header section -->
+<section class="innerbanner" role="banner">
+  <header id="header"> 
+    <!-- navigation section  -->
+    <div class="header-content clearfix"> <a class="logo" href="index.html"><img src="images/logo.png" alt="iLegalSelfHelp"></a>
+      <nav class="navigation" role="navigation">
+        <ul class="primary-nav">
+          <li><a href="upload.html">Upload</a></li>
+          <li><a href="notification.html">Notifications</a></li>
+          <li><a href="mapping.html">Mapping</a></li>
+        </ul>
+      </nav>
+      <a href="#" class="nav-toggle">Menu<span></span></a> 
+	</div>
+    <!-- navigation section  --> 
+  </header>
+  <!-- banner text -->
+  <div class="container">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="innerbanner-text text-center">
+        <p>PDF Mapping Tool Fields</p>
+        <!-- banner text --> 
+      </div>
+    </div>
+  </div>
+</section>
+<!-- header section --> 
+
+<!-- description text section -->
+<section id="inner-description" class="section inner-description">
+<div class="container">
+	<div class="col-md-10 col-md-offset-1 text-left">
+		<h2 style="color: #2e6c80;">How to add fields to the mapping tool (for auto-fill purposes):</h2>
+	</div>
+	
+	<div class="col-md-10 col-md-offset-1 text-left">
+		<ol>
+			<li>Choose an appropriate category</h3></li>
+			<li>Click Go</li>
+			<li>Review the list of available mapping fields for that category.</li>
+			<li>Enter the name of a new mapping field.</li>
+			<li>Click Add Field</li>
+		</ol>
+	</div>
+	
+	<div id = "PDFCategory" class="col-md-10 col-md-offset-1 text-left">
+		<!-- PDF Category -->
+		<form id="Categoryform" enctype="multipart/form-data" method="POST">
+			<select name="CATEGORY">
+				<option value="">Select a Category</option>
+				<option value="general">General</option>
+				<option value="adoption">Adoption</option>
+				<option value="civil">Civil</option>
+				<option value="crime">Crime</option>
+				<option value="family">Family</option>
+				<option value="fee">Fee</option>
+				<option value="name_change">Name Change</option>
+				<option value="other">Other</option>
+				<option value="probate">Probate</option>
+				<option value="small_claims">Small Claims</option>
+				<option value="traffic">Traffic</option>
+			</select>
+			<input type="submit" value="GO!" id="CategorySubmitBtn">
+		</form>
+	</div>
+
+	
+	<!-- PDF Mapping -->
+	<div id="AvailableMap" class="col-md-10 col-md-offset-1 text-left">
+	</div>
+	
+	<div id="PDFMap" class="col-md-10 col-md-offset-1 text-left">
+		<form id="Mapform" enctype="multipart/form-data" method="POST">
+			<input name = "FIELDNAME" type="text">
+			<select name="CATEGORY">
+				<option value="">Select a Category</option>
+				<option value="adoption">Adoption</option>
+				<option value="civil">Civil</option>
+				<option value="crime">Crime</option>
+				<option value="family">Family</option>
+				<option value="fee">Fee</option>
+				<option value="name_change">Name Change</option>
+				<option value="other">Other</option>
+				<option value="probate">Probate</option>
+				<option value="small_claims">Small Claims</option>
+				<option value="traffic">Traffic</option>
+			</select>
+			<input type="submit" value="Add Field!" id="MapSubmitBtn">
+		</form>
+	</div>
+</div>
+</section>
+
+<!-- footer -->
+<footer class="section footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="col-md-12">
+        <p>© 2017 All rights reserved. All Rights Reserved<br>iLegalSelfHelp</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer --> 
+
+<!-- JS FILES --> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="js/bootstrap.min.js"></script> 
+<script src="js/jquery.fancybox.pack.js"></script> 
+<script src="js/jquery.waypoints.min.js"></script> 
+<script src="js/retina.min.js"></script> 
+<script src="js/modernizr.js"></script> 
+<script src="js/jquery.contact.js"></script> 
+<script src="js/main.js"></script>
+</body>
+</html>

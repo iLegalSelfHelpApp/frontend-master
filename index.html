@@ -1,0 +1,136 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login - iLegalSelfHelp</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/jquery.fancybox.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+<style>
+.button {
+    background-color: #9932CC; /* Purple */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.button2:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+</style>
+
+</head>
+
+<body>
+<!-- header section -->
+<section class="innerbanner" role="banner">
+  <header id="header"> 
+    <!-- navigation section  -->
+    <div class="header-content clearfix"> <a class="logo" href="index.html"><img src="images/logo.png" alt="iLegalSelfHelp"></a>
+    <!-- navigation section  --> 
+  </header>
+  <!-- banner text -->
+  <div class="container">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="innerbanner-text text-center">
+        <p>Admin Console</p>
+        <!-- banner text --> 
+      </div>
+    </div>
+  </div>
+</section>
+<SCRIPT>
+  function passWord() {
+  var testV = 1;
+  var pass1 = prompt('Please Enter Your Password',' ');
+  while (testV < 3) {
+  if (!pass1)
+  history.go(-1);
+  if (pass1.toLowerCase() == "ilegal") {
+  //alert('password successful...');
+
+  function tempAlert(msg,duration)
+  {
+     var el = document.createElement("div");
+     el.setAttribute("style","position:absolute;top:40%;left:20%;background-color:white;");
+     el.innerHTML = msg;
+     setTimeout(function(){
+      el.parentNode.removeChild(el);
+     },duration);
+     document.body.appendChild(el);
+  }
+
+  tempAlert("password successful...",5000);
+  window.location.href = "upload.html";
+
+  break;
+  }
+  if (input === null) {
+        return; //break out of the function early
+    }
+  testV+=1;
+  var pass1 =
+  prompt('Access Denied - try again...','Password');
+  }
+  if (pass1.toLowerCase()!="password" & testV ==3)
+  history.go(-1);
+  return " ";
+  }
+  </SCRIPT>
+<!-- header section --> 
+<!-- description text section -->
+<section id="inner-description" class="section inner-description">
+  <div class="container">
+    <div class="col-md-10 col-md-offset-1 text-center">
+      <button onclick="passWord()" class="button button2">ENTER</button>
+<hr />
+    </div>
+  </div>
+</section>
+
+<!-- footer -->
+<footer class="section footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="col-md-12">
+        <p>
+        </p>
+        <p>© 2017 All rights reserved. All Rights Reserved<br>
+          iLegalSelfHelp</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer --> 
+
+<!-- JS FILES --> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="js/bootstrap.min.js"></script> 
+<script src="js/jquery.fancybox.pack.js"></script> 
+<script src="js/jquery.waypoints.min.js"></script> 
+<script src="js/retina.min.js"></script> 
+<script src="js/modernizr.js"></script> 
+<script src="js/jquery.contact.js"></script> 
+<script src="js/main.js"></script>
+</body>
+</html>

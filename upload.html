@@ -1,0 +1,315 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+
+<style type="text/css">
+.div1 {
+	height: auto;
+    width: 250px;
+    padding: 10px;
+    border: 1px solid #aaaaaa;
+}
+.div2 {
+    height: auto;
+    padding: 10px;
+    border: 1px solid #aaaaaa;
+}
+.divcontainer {
+    width: 60%;
+    height: auto;
+    background: #2e6c80;
+    margin: auto;
+    padding: 10px;
+}
+.one {
+    width: 45%;
+    height: auto;
+    background: white;
+    float: left;
+    padding: 10px;
+}
+.two {
+    margin-left: 50%;
+    height: auto;
+    background: white;
+    padding: 10px;
+}
+</style>
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData('text', ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData('text');
+    ev.target.appendChild(document.getElementById(data));
+}
+
+var MappingArrayIDs = [];
+var MappingArrayNames = [];
+var FieldArrayIDs = [];
+var FieldArrayNames = [];
+	
+$(document).ready(function () {
+	$("#mapinstructions").hide();
+	$("#mapbutton").hide();
+
+	$("#PDFUploadSubmitBtn").click(function (event) {
+		//stop submit the form, we will post it manually.
+		event.preventDefault();
+		// Get form
+		var form = $('#PDFform')[0];
+		// Create an FormData object
+		var data = new FormData(form);
+
+		// disabled the submit button
+		$("#PDFUploadSubmitBtn").prop("disabled", true);
+
+		$.ajax({
+			type: "POST",
+			enctype: 'multipart/form-data',
+			url: "../Dev/UploadPDF",
+			data: data,
+			processData: false,
+			contentType: false,
+			cache: false,
+			timeout: 600000,
+			success: function (data) {
+				$("#PDFUploadSubmitBtn").prop("disabled", false);
+				$("#PDFUpload").hide();
+				$("#mapresult").text("PDF: " + data.PDFName + " Category: " + data.Category + " Successfully Uploaded.");
+				$("#mapinstructions").show();
+				
+				var $ul = $("<ul>").appendTo($("#fieldstomap"));
+				for (i=0; i < data.FieldIDArray.length; i++){
+					FieldArrayIDs.push(data.FieldIDArray[i]);
+				}
+				for (i=0; i < data.FieldArray.length; i++){
+					$("<div class='div1' id='drag"+ i +"' draggable='true' ondragstart='drag(event)'>").text(data.FieldArray[i]).appendTo($ul);
+					$("</div>").appendTo($ul);
+					FieldArrayNames.push(data.FieldArray[i]);
+				}
+									
+				var $ul2 = $("<ul>").appendTo($("#mappingoptions"));
+				for (i=0; i < data.MappingArray.length; i++) {
+					$("<div id='drop" + (data.MappingArray[i])[0]  +"' class='div2' ondrop='drop(event)' ondragover='allowDrop(event)'><div id = 'text1' style='color: #2e6c80;'>").text((data.MappingArray[i])[1]).appendTo($ul2);
+					$("</div></div>").appendTo($ul2);
+					MappingArrayIDs.push((data.MappingArray[i])[0]);
+					MappingArrayNames.push((data.MappingArray[i])[1]);
+				}
+				$("#mapbutton").show();
+			},
+			error: function (e) {
+				$("#PDFUploadSubmitBtn").prop("disabled", false);
+				$("#PDFMap").text("PDF Upload Failure; Please Try Again.");
+            }
+        });
+    });
+});
+
+function getDivChildren() {
+	//GET MAPPINGS
+	var FieldIDs = [];
+	var MappingIDs = [];
+
+	for (i=0; i < MappingArrayIDs.length; i++) {
+		var children = document.getElementById('drop' + (MappingArrayIDs[i])).children;
+		//console.log('AUTOFILL ID:' + MappingArrayIDs[i]);
+		//console.log('AUTOFILL FIELD:' + MappingArrayNames[i]);
+		for (j = 0; j < children.length; j++) {
+			for (k = 0; k < FieldArrayNames.length; k++) {
+				if  (FieldArrayNames[k] == children[j].textContent) {
+					//console.log('MAPPED ID: ' + FieldArrayIDs[k]);
+					//console.log('MAPPED FIELD: ' + children[j].textContent);
+					FieldIDs.push(FieldArrayIDs[k]);
+					MappingIDs.push(MappingArrayIDs[i]);
+				}
+			}
+		}
+	}
+	
+	//LOG MAPPINGS
+	//for (i = 0; i < MappingIDs.length; i++) {
+		//console.log('FIELD ID: ' + FieldIDs[i] + ' MAPPED TO MAPPING FIELD ID ' + MappingIDs[i]);
+	//}
+	
+	//Call Servlet and send data as parameters
+	// Create an FormData object
+	var data = new FormData();
+	data.append('FieldIDs', JSON.stringify(FieldIDs));
+	data.append('MappingIDs', JSON.stringify(MappingIDs));
+	
+	// disabled the map field button
+	$("#mapbutton").prop("disabled", true);
+
+	$.ajax({
+		type: "POST",
+		enctype: 'multipart/form-data',
+		url: "../Dev/InsertMappedFields",
+		data: data,
+		processData: false,
+		contentType: false,
+		cache: false,
+		timeout: 600000,
+		success: function (data) {
+			$("#mapbutton").prop("disabled", false);
+			$("#PDFMap").text("Mapping Fields Success; PDF is ready to go!");
+			/*$("#PDFMap").append(data.Message);
+			$("#PDFMap").append(data.Success);
+			for (i = 0; i < data.MapArray.length; i++) {
+				$("#PDFMap").append("<br>");
+				$("#PDFMap").append(data.MapArray[i]);
+				$("#PDFMap").append("<br>");
+				$("#PDFMap").append(data.FieldArray[i]);
+			}*/
+		},
+		error: function (e) {
+			$("#mapbutton").prop("disabled", false);
+			$("#PDFMap").text("Mapping Fields Failure; Please Try Again.");
+        }
+    });
+}
+	
+</script>
+
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload PDF - iLegalSelfHelp</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/jquery.fancybox.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animate.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+</head>
+
+<body>
+<!-- header section -->
+<section class="innerbanner" role="banner">
+  <header id="header"> 
+    <!-- navigation section  -->
+    <div class="header-content clearfix"> <a class="logo" href="index.html"><img src="images/logo.png" alt="iLegalSelfHelp"></a>
+      <nav class="navigation" role="navigation">
+        <ul class="primary-nav">
+          <li><a href="upload.html">Upload</a></li>
+          <li><a href="notification.html">Notifications</a></li>
+          <li><a href="mapping.html">Mapping</a></li>
+        </ul>
+      </nav>
+      <a href="#" class="nav-toggle">Menu<span></span></a> 
+	</div>
+    <!-- navigation section  --> 
+  </header>
+  <!-- banner text -->
+  <div class="container">
+    <div class="col-md-10 col-md-offset-1">
+      <div class="innerbanner-text text-center">
+        <p>PDF Upload</p>
+        <!-- banner text --> 
+      </div>
+    </div>
+  </div>
+</section>
+<!-- header section --> 
+
+<!-- description text section -->
+<section id="inner-description" class="section inner-description">
+  <div class="container">
+    <div id = "PDFUpload">
+	<div class="col-md-10 col-md-offset-1 text-left">
+     <h2 style="color: #2e6c80;">How to use the uploader:</h2>
+	</div>
+	
+	<div class="col-md-10 col-md-offset-1 text-left">
+	<ol>
+		<li>Choose a new PDF by clicking the browse button</h3></li>
+		<li>Choose an appropriate title</li>
+		<li>Choose an appropriate category</li>
+		<li>Click Go</li>
+	</ol>
+
+	<!-- PDF Upload -->
+	<form id="PDFform" enctype="multipart/form-data" method="POST">
+		<input name="PDF" type="file">
+		<input name = "FILENAME" type="text">
+		<select name="CATEGORY">
+			<option value="">Select a Category</option>
+			<option value="adoption">Adoption</option>
+			<option value="civil">Civil</option>
+			<option value="crime">Crime</option>
+			<option value="family">Family</option>
+			<option value="fee">Fee</option>
+			<option value="name_change">Name Change</option>
+			<option value="other">Other</option>
+			<option value="probate">Probate</option>
+			<option value="small_claims">Small Claims</option>
+			<option value="traffic">Traffic</option>
+		</select>
+		<input type="submit" value="GO!" id="PDFUploadSubmitBtn">
+	</form>
+	</div>
+	</div>
+	
+	<!-- PDF Mapping -->
+	<div id="PDFMap" class="col-md-10 col-md-offset-1 text-left">
+		<div id='mapresult'>
+		</div>
+		
+		<div id='mapinstructions' >
+			<h2 style="color: #2e6c80;">How to use the mapper:</h2>
+			<ol>
+				<li>The fields on the left are the fillable fields in the uploaded PDF.</h3></li>
+				<li>The fields on the right are the available fields for mapping.</li>
+				<li>Drag the fields you wish to map from the left and drop them in the appropriate mapping field box on the right.</li>
+				<li>Click Map Fields</li>
+			</ol>
+		</div>	
+		
+		<div id='fieldstomap' class='one' ondrop='drop(event)' ondragover='allowDrop(event)'>
+		</div>
+    
+		<div id='mappingoptions' class='two'>		
+		</div>
+		
+		<button id='mapbutton' type='button' onclick='getDivChildren()'>Map Fields!</button>
+	</div>
+</div>
+</section>
+
+<!-- footer -->
+<footer class="section footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="col-md-12">
+        <p>© 2017 All rights reserved. All Rights Reserved<br>iLegalSelfHelp</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer --> 
+
+<!-- JS FILES --> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="js/bootstrap.min.js"></script> 
+<script src="js/jquery.fancybox.pack.js"></script> 
+<script src="js/jquery.waypoints.min.js"></script> 
+<script src="js/retina.min.js"></script> 
+<script src="js/modernizr.js"></script> 
+<script src="js/jquery.contact.js"></script> 
+<script src="js/main.js"></script>
+</body>
+</html>
